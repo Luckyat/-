@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx ">
+
+    <context:component-scan
+            base-package="com.zhp0714">
+    </context:component-scan>
+    <mvc:annotation-driven></mvc:annotation-driven>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    </bean>
+
+    <mvc:resources location="/static/" mapping="/static/**"></mvc:resources>
+    <mvc:default-servlet-handler/>
+    <!--mybatis的相关配置-->
+    <bean id="dataSource"
+          class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource">
+        <property name="driverClassName"
+                  value="com.mysql.jdbc.Driver"></property>
+        <property name="url"
+                  value="jdbc:mysql://localhost:3306/db4?useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=false"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+        <property name="initialSize" value="5"></property>
+        <property name="maxIdle" value="2"></property>
+    </bean>
+
+
+    <bean id="sqlSessionFactory"
+          class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath:com/zhp0714/mapper/*.xml"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.zhp0714.mapper"></property>
+    </bean>
+    <!--spring选择的代理方式-->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!--<mvc:cors>
+        <mvc:mapping path="/**" allowed-origins="*" allow-credentials="true" allowed-methods="*"/>
+    </mvc:cors>-->
+
+
+    <!-- &lt;!&ndash; 事务管理 &ndash;&gt;
+    <bean id="txManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    &lt;!&ndash; 注释查看请求后数据库效果   http://localhost:8080/testtx &ndash;&gt;
+    <tx:annotation-driven  transaction-manager="txManager" />-->
+
+
+</beans>
